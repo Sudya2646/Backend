@@ -29,7 +29,7 @@ AppDataSource.initialize()
     app.get("/products/:id", ProductController.getProductById.bind(ProductController)); // ✅ Get Product by ID
     app.get("/search", ProductController.searchProducts.bind(ProductController)); // ✅ Search Products
     app.post("/products/add",upload.single("image"), ProductController.addProduct.bind(ProductController));
-    app.put("/products/:id", ProductController.updateProduct.bind(ProductController));
+    app.put("/products/:id",upload.single("image"), ProductController.updateProduct.bind(ProductController));
     app.delete("/products/:id", ProductController.deleteProduct.bind(ProductController));
 
     const PORT = process.env.PORT || 5000;

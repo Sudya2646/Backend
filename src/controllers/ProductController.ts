@@ -89,18 +89,38 @@ export class ProductController {
   }
 
   // ✅ Update Product
-  static async updateProduct(req: Request, res: Response) {
+  static async updateProduct(req: MulterRequest, res: Response) {
     try {
       const { id } = req.params;
       console.log(`✏️ Updating product with ID: ${id}`);
+  
       const productRepo = AppDataSource.getRepository(Product);
-      await productRepo.update(id, req.body);
-      res.json({ message: `✅ Product ID ${id} updated successfully` });
+      const product = await productRepo.findOne({ where: { id: Number(id) } });
+  
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+  
+      // Extract updated fields from request
+      const { sku, name, price } = req.body;
+      
+      // ✅ Keep existing image if no new file is uploaded
+      const image = req.file ? req.file.filename : product.image;
+  
+      // ✅ Update the product
+      await productRepo.update(id, { sku, name, price, image });
+  
+      // ✅ Fetch updated product and return it
+      const updatedProduct = await productRepo.findOne({ where: { id: Number(id) } });
+  
+      res.json({ message: `✅ Product ID ${id} updated successfully`, product: updatedProduct });
     } catch (error) {
       console.error("❌ Error updating product:", error);
       res.status(500).json({ error: "Database update failed" });
     }
   }
+  
+
 
   // ✅ Delete Product by ID
   static async deleteProduct(req: Request, res: Response) {
