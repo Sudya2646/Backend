@@ -28,7 +28,7 @@ AppDataSource.initialize()
     app.get("/products", ProductController.getProducts.bind(ProductController));
     app.get("/products/:id", ProductController.getProductById.bind(ProductController)); // ✅ Get Product by ID
     app.get("/search", ProductController.searchProducts.bind(ProductController)); // ✅ Search Products
-    app.post("/products/add",upload.single("image"), ProductController.addProduct.bind(ProductController));
+    app.post("/products/add",upload.fields([{ name: "image" }, { name: "image1" }]), ProductController.addProduct.bind(ProductController));
     app.put("/products/:id",upload.single("image"), ProductController.updateProduct.bind(ProductController));
     app.delete("/products/:id", ProductController.deleteProduct.bind(ProductController));
 

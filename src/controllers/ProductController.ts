@@ -75,18 +75,29 @@ export class ProductController {
   static async addProduct(req: MulterRequest, res: Response): Promise<void> {
     try {
       const { sku, name, price } = req.body;
-      const image = req.file ? req.file.filename : null; // ✅ TypeScript fix for multer
-
+  
+      // ✅ Retrieve two images from request
+      const image = req.files && (req.files as { [fieldname: string]: Express.Multer.File[] }).image
+        ? req.files["image"][0].filename
+        : null;
+  
+      const image1 = req.files && (req.files as { [fieldname: string]: Express.Multer.File[] }).image1
+        ? req.files["image1"][0].filename
+        : null;
+  
       const productRepo = AppDataSource.getRepository(Product);
-      const newProduct = productRepo.create({ sku, name, price, image });
+  
+      // ✅ Save both images in the database
+      const newProduct = productRepo.create({ sku, name, price, image, image1 });
       await productRepo.save(newProduct);
-
+  
       res.status(201).json({ message: "✅ Product added!", product: newProduct });
     } catch (error) {
       console.error("❌ Error adding product:", error);
       res.status(500).json({ message: "❌ Error adding product", error });
     }
   }
+  
 
   // ✅ Update Product
   static async updateProduct(req: MulterRequest, res: Response) {

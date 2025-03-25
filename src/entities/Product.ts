@@ -14,6 +14,9 @@ export class Product {
   @Column("decimal")
   price: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) // ✅ Ensure it's nullable if image upload is optional
   image: string;
+
+  @Column({ nullable: true }) // ✅ Add this to support image1
+  image1: string;
 }
